@@ -2,13 +2,20 @@ from flask import Flask, render_template
 from datetime import date
 
 app = Flask(__name__)
+# Datos generales
+nombre_admin = "Alejandro Fernandez"
+tienda = "TecnoMarket"
+fecha = date.today()
+
+
+@app.route("/")
+def hola():
+    
+    return render_template("dashboard.html", nombre_admin = nombre_admin, tienda = tienda, fecha = fecha, pagina="inicio")
 
 @app.route('/dashboard')
 def dashboard():
-    # Datos generales
-    nombre_admin = "Alejandro Fernandez"
-    tienda = "InfoMatica"
-    fecha = date.today()
+    
 
     # Lista de productos
     productos = [

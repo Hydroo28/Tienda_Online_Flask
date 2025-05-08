@@ -5,10 +5,25 @@
     <title>Panel de Gestión - {{ tienda }}</title>
 </head>
 <body>
-    <h1>Hola {{ nombre_admin }}, bienvenido al panel de {{ tienda }}</h1>
-    <p>Fecha actual: {{ fecha }}</p>
 
+    {%if pagina == "inicio"%}
+    <header>
+        <nav>
+            <button>Inicio</button>
+            <button>Productos</button>
+            <button></button>
+        </nav>
+    </header>
+    <main>
+        <h1>Hola {{ nombre_admin }}, bienvenido al panel de {{ tienda }}</h1>
+        <p>Fecha actual: {{ fecha }}</p>
     <hr>
+    </main>
+
+    {%else%}
+
+
+    
     <h2>Catálogo de Productos</h2>
     <table border="1">
         <tr>
@@ -60,6 +75,6 @@
         {% endfor %}
     </table>
     <p><strong>Ingreso total:</strong> ${{ ingreso_total }}</p>
-
+    {%endif%}
 </body>
 </html>
