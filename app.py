@@ -1,20 +1,27 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from datetime import date
+from pymongo import MongoClient
 
 app = Flask(__name__)
+
+
+#Conexion a la BBDD
+cliente = MongoClient("mongodb+srv://afercor2806:LCrXK9Mqkj78BJY8@cluster0.t9bfnum.mongodb.net/")
+db = cliente["tecknomarket"]
+productos_coleccion = db["productos"]
+
+
+
+
+
 # Datos generales
 nombre_admin = "Alejandro Fernandez"
 tienda = "TecnoMarket"
 fecha = date.today()
-productos = [
-        {"nombre": "Ordenador Gaming", "precio": 1500.0, "stock": 5, "categoria": "Computadoras"},
-        {"nombre": "Iphone 15", "precio": 800.0, "stock": 0, "categoria": "Celulares"},
-        {"nombre": "Teclado Mecánico", "precio": 120.0, "stock": 10, "categoria": "Periféricos"},
-        {"nombre": "Mouse Gaming", "precio": 45.0, "stock": 3, "categoria": "Periféricos"}
-    ]
 
 
 
+#  Por defecto la pagina te redirige a inicio
 @app.route("/")
 def hola():
     
@@ -26,7 +33,7 @@ def hola():
 
 
 
-
+#Inicio
 @app.route("/inicio")
 def pagina_inicio():
     
@@ -36,6 +43,7 @@ def pagina_inicio():
                            pagina="inicio")
 
 
+#Clientes
 @app.route('/clientes')
 def pagina_clientes():
     pagina = "clientes"
@@ -68,6 +76,8 @@ def pagina_clientes():
 
 
 
+
+#Pedidos
 @app.route('/pedidos')
 def pagina_pedidos():
     pagina = "pedidos"
@@ -98,12 +108,14 @@ def pagina_pedidos():
     
 
 
+
+#Productos
 @app.route("/productos")
 def pagina_productos():
 
     pagina = "productos"
     # Lista de productos
-    
+    productos = list(productos_coleccion.find())
 
     # Total de unidades en stock
     total_stock = 0
@@ -117,6 +129,8 @@ def pagina_productos():
                            )
 
 
+
+#Formulario
 @app.route("/productos_nuevo", methods=["POST"])
 def nuevo_producto():
     nombre = request.form.get("nombre")
@@ -124,17 +138,19 @@ def nuevo_producto():
     categoria = request.form.get("categoria")
     stock = int(request.form.get("stock"))
 
-    nuevo = {
+    nuevo_producto = {
         "nombre": nombre,
         "precio": precio,
         "categoria": categoria,
         "stock": stock
     }
-    productos.append(nuevo)
-    
+    #Insertar el producto nuevo en la BBDD
+    productos_coleccion.insert_one(nuevo_producto)
+
+
     print(f"Nuevo producto: {nombre}, ${precio}, {categoria}, Stock: {stock}")
 
-    return pagina_productos()
+    return redirect("/productos")
 
 
 @app.route("/productos/nuevo", methods=["GET"])
