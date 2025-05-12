@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from datetime import date
 
 app = Flask(__name__)
@@ -11,24 +11,29 @@ fecha = date.today()
 @app.route("/")
 def hola():
     
-    return render_template("dashboard.html", nombre_admin = nombre_admin, tienda = tienda, fecha = fecha, pagina="inicio")
+    return render_template("dashboard.html", 
+                           nombre_admin = nombre_admin, 
+                           tienda = tienda, fecha = fecha, 
+                           pagina="inicio")
 
 @app.route('/dashboard')
 def dashboard():
+    pagina = request.args.get("pagina", "inicio")
+
+
+
+@app.route("/inicio")
+def pagina_inicio():
     
+    return render_template("dashboard.html", 
+                           nombre_admin = nombre_admin, 
+                           tienda = tienda, fecha = fecha, 
+                           pagina="inicio")
 
-    # Lista de productos
-    productos = [
-        {"nombre": "Ordenador Gaming", "precio": 1500.0, "stock": 5, "categoria": "Computadoras"},
-        {"nombre": "Iphone 15", "precio": 800.0, "stock": 0, "categoria": "Celulares"},
-        {"nombre": "Teclado Mecánico", "precio": 120.0, "stock": 10, "categoria": "Periféricos"},
-        {"nombre": "Mouse Gaming", "precio": 45.0, "stock": 3, "categoria": "Periféricos"}
-    ]
 
-    # Total de unidades en stock
-    total_stock = 0
-    for producto in productos:
-        total_stock += producto["stock"]
+@app.route('/clientes')
+def pagina_clientes():
+    pagina = "clientes"
 
     # Lista de clientes
     clientes = [
@@ -50,6 +55,17 @@ def dashboard():
         if cliente["pedidos"] > cliente_top["pedidos"]:
             cliente_top = cliente
 
+    return render_template("dashboard.html", 
+                           pagina = pagina,
+                           clientes=clientes,
+                           clientes_activos=clientes_activos,
+                           cliente_top=cliente_top,)
+
+
+
+@app.route('/pedidos')
+def pagina_pedidos():
+    pagina = "pedidos"
     # Lista de pedidos
     pedidos = [
         {"cliente": "Ana Torres", "total": 1500.0, "fecha": "2025-05-01"},
@@ -65,17 +81,40 @@ def dashboard():
 
     return render_template(
         'dashboard.html',
+        pagina = pagina,
         nombre_admin=nombre_admin,
         tienda=tienda,
         fecha=fecha,
-        productos=productos,
-        total_stock=total_stock,
-        clientes=clientes,
-        clientes_activos=clientes_activos,
-        cliente_top=cliente_top,
+        
+        
         pedidos=pedidos,
         ingreso_total=ingreso_total
     )
+    
+
+
+@app.route("/productos")
+def pagina_productos():
+
+    pagina = "productos"
+    # Lista de productos
+    productos = [
+        {"nombre": "Ordenador Gaming", "precio": 1500.0, "stock": 5, "categoria": "Computadoras"},
+        {"nombre": "Iphone 15", "precio": 800.0, "stock": 0, "categoria": "Celulares"},
+        {"nombre": "Teclado Mecánico", "precio": 120.0, "stock": 10, "categoria": "Periféricos"},
+        {"nombre": "Mouse Gaming", "precio": 45.0, "stock": 3, "categoria": "Periféricos"}
+    ]
+
+    # Total de unidades en stock
+    total_stock = 0
+    for producto in productos:
+        total_stock += producto["stock"]
+    
+    return render_template('dashboard.html', 
+                           pagina = pagina,
+                           productos=productos,
+                           total_stock=total_stock
+                           )
 
 if __name__ == '__main__':
     app.run(debug=True)
