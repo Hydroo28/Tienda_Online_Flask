@@ -6,6 +6,13 @@ app = Flask(__name__)
 nombre_admin = "Alejandro Fernandez"
 tienda = "TecnoMarket"
 fecha = date.today()
+productos = [
+        {"nombre": "Ordenador Gaming", "precio": 1500.0, "stock": 5, "categoria": "Computadoras"},
+        {"nombre": "Iphone 15", "precio": 800.0, "stock": 0, "categoria": "Celulares"},
+        {"nombre": "Teclado Mecánico", "precio": 120.0, "stock": 10, "categoria": "Periféricos"},
+        {"nombre": "Mouse Gaming", "precio": 45.0, "stock": 3, "categoria": "Periféricos"}
+    ]
+
 
 
 @app.route("/")
@@ -16,9 +23,7 @@ def hola():
                            tienda = tienda, fecha = fecha, 
                            pagina="inicio")
 
-@app.route('/dashboard')
-def dashboard():
-    pagina = request.args.get("pagina", "inicio")
+
 
 
 
@@ -98,12 +103,7 @@ def pagina_productos():
 
     pagina = "productos"
     # Lista de productos
-    productos = [
-        {"nombre": "Ordenador Gaming", "precio": 1500.0, "stock": 5, "categoria": "Computadoras"},
-        {"nombre": "Iphone 15", "precio": 800.0, "stock": 0, "categoria": "Celulares"},
-        {"nombre": "Teclado Mecánico", "precio": 120.0, "stock": 10, "categoria": "Periféricos"},
-        {"nombre": "Mouse Gaming", "precio": 45.0, "stock": 3, "categoria": "Periféricos"}
-    ]
+    
 
     # Total de unidades en stock
     total_stock = 0
@@ -115,6 +115,37 @@ def pagina_productos():
                            productos=productos,
                            total_stock=total_stock
                            )
+
+
+@app.route("/productos_nuevo", methods=["POST"])
+def nuevo_producto():
+    nombre = request.form.get("nombre")
+    precio = float(request.form.get("precio"))
+    categoria = request.form.get("categoria")
+    stock = int(request.form.get("stock"))
+
+    nuevo = {
+        "nombre": nombre,
+        "precio": precio,
+        "categoria": categoria,
+        "stock": stock
+    }
+    productos.append(nuevo)
+    
+    print(f"Nuevo producto: {nombre}, ${precio}, {categoria}, Stock: {stock}")
+
+    return pagina_productos()
+
+
+@app.route("/productos/nuevo", methods=["GET"])
+def formulario_nuevo_producto():
+    return render_template("dashboard.html", 
+                           pagina="productos_nuevo",
+                           nombre_admin=nombre_admin,
+                           tienda=tienda,
+                           fecha=fecha)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
