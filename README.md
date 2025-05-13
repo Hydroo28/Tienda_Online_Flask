@@ -1,27 +1,54 @@
-Aplicación "TecnoMarket"
 
-Es un panel de gestión web desarrollado con Flask que permite administrar una tienda llamada TecnoMarket. Sus funciones principales son:
+# 🛒 Aplicación **TecnoMarket**
 
-    Inicio: Muestra un saludo personalizado al administrador, junto con la fecha actual.
+**TecnoMarket** es un **panel de gestión web** desarrollado con **Flask** que permite administrar de forma sencilla una tienda desde una interfaz web centralizada.
 
-    Productos:
+## 🔧 Funcionalidades Principales
 
-        Consulta de un catálogo de productos almacenados en MongoDB.
+### 🏠 Inicio
+- Muestra un **saludo personalizado** al administrador.
+- Visualiza la **fecha actual**.
 
-        Visualización del stock total.
+---
 
-        Formulario para añadir nuevos productos.
+### 📦 Productos
+- Consulta de un **catálogo de productos** almacenados en **MongoDB**.
+- Visualización del **stock total disponible**.
+- Formulario para **añadir nuevos productos**.
+- (En desarrollo) Funcionalidad para **eliminar productos**.
 
-    Clientes:
+---
 
-        Muestra una lista de clientes con su estado (activo/inactivo) y número de pedidos.
+### 👥 Clientes
+- Muestra una **lista de clientes** con:
+  - Nombre y correo electrónico.
+  - Estado: **activo/inactivo**.
+  - Número de **pedidos realizados**.
+- Cálculo de:
+  - Número total de **clientes activos**.
+  - Cliente con **mayor cantidad de pedidos**.
 
-        Calcula cuántos clientes están activos y quién es el que ha hecho más pedidos.
+---
 
-    Pedidos:
+### 📑 Pedidos
+- Lista de **pedidos recientes** con:
+  - Cliente asociado.
+  - Total del pedido.
+  - Fecha del pedido.
+- Cálculo del **ingreso total** generado por los pedidos.
 
-        Lista de pedidos recientes con sus totales y fechas.
+---
 
-        Calcula el ingreso total generado por esos pedidos.
+## 💡 Estructura del Proyecto
 
-Todo el sistema está centralizado en una sola plantilla HTML (dashboard.html) que cambia dinámicamente según la sección seleccionada.
+- Toda la lógica se integra en una única plantilla HTML: `dashboard.html`.
+- El contenido se actualiza dinámicamente según la sección seleccionada, gracias al uso de condicionales en Jinja2.
+
+---
+
+## 🧰 Tecnologías Utilizadas
+
+- **Python + Flask** (Backend)
+- **MongoDB** (Base de datos NoSQL)
+- **HTML + CSS** (Frontend)
+- **Jinja2** (Motor de plantillas)
