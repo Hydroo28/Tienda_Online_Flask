@@ -1,12 +1,8 @@
-<header>
-    <nav>
-        <a href="/inicio"><button>Inicio</button></a>
-        <a href="/productos"><button>Productos</button></a>
-        <a href="/clientes"><button>Clientes</button></a>
-        <a href="/pedidos"><button>Pedidos</button></a>
-    </nav>     
-</header>
+{% extends 'base.html' %}
 
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
 <h2>Catálogo de Productos</h2>
 <div>
     <table border="1">
@@ -33,7 +29,6 @@
     </table>
 </div>
 <p><strong>Total en stock:</strong> {{ total_stock }}</p>
-
 <div>
     <a href="/productos/nuevo">
         <button>
@@ -47,3 +42,4 @@
     </a>
 
 </div>
+{% endblock %}
