@@ -145,7 +145,6 @@ def pagina_productos():
 #Formulario
 @app.route("/productos_nuevo", methods=["POST"])
 def nuevo_producto():
-
     nombre = request.form.get("nombre", "").strip()
     categoria = request.form.get("categoria", "").strip()
 
@@ -156,7 +155,6 @@ def nuevo_producto():
         flash("Precio y stock deben ser valores numéricos.")
         return redirect("/productos_nuevo")
 
-    # Validaciones de negocio
     if not nombre or not categoria:
         flash("El nombre y la categoría no pueden estar vacíos.")
         return redirect("/productos_nuevo")
@@ -167,15 +165,29 @@ def nuevo_producto():
         flash("El stock no puede ser negativo.")
         return redirect("/productos_nuevo")
 
-    try:
-        producto = Producto(nombre=nombre, precio=precio, categoria=categoria, stock=stock)
-        productos_coleccion.insert_one(producto.to_dict())
-        flash("Producto añadido correctamente.")
-    except ValueError as e:
-        flash(f"Error al crear el producto: {str(e)}")
-        return redirect("/productos_nuevo")
+    # Buscar producto existente por nombre (insensible a mayúsculas) y categoría
+    producto_existente = productos_coleccion.find_one({
+        "nombre": {"$regex": f"^{nombre}$", "$options": "i"},
+        "categoria": categoria
+    })
+
+    if producto_existente:
+        productos_coleccion.update_one(
+        {"_id": producto_existente["_id"]},
+        {"$set": {"precio": precio, "stock": stock}}
+    )
+        flash("Producto existente actualizado con nuevo stock y precio.")
+    else:
+        try:
+            producto = Producto(nombre=nombre, precio=precio, categoria=categoria, stock=stock)
+            productos_coleccion.insert_one(producto.to_dict())
+            flash("Producto añadido correctamente.")
+        except ValueError as e:
+            flash(f"Error al crear el producto: {str(e)}")
+            return redirect("/productos_nuevo")
 
     return redirect("/productos")
+
 
 
 
