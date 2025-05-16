@@ -3,17 +3,17 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% block title %} Tecno Market {% block title %}</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+        <title>{% block title %} Tecno Market {% endblock %}</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     </head>
     
     <body>
         <header>
             <nav>
-                <a href="{{ url_for('dashboard') }}"><button>Inicio</button></a>
-                <a href="{{ url_for('ver_productos') }}"><button>Productos</button></a>
-                <a href="{{ url_for('clientes') }}"><button>Clientes</button></a>
-                <a href="{{ url_for('pedidos') }}"><button>Pedidos</button></a>
+                <a href="{{ url_for('pagina_inicio') }}"><button>Inicio</button></a>
+                <a href="{{ url_for('pagina_productos') }}"><button>Productos</button></a>
+                <a href="{{ url_for('pagina_clientes') }}"><button>Clientes</button></a>
+                <a href="{{ url_for('pagina_pedidos') }}"><button>Pedidos</button></a>
             </nav>     
         </header>
 

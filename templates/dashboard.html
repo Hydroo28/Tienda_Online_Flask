@@ -1,192 +1,93 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Panel de Gestión - {{ tienda }}</title>
-    <link rel="stylesheet" href="./../static/styles.css">
-</head>
-<body>
-    <div class="general">
-        <!-- ############Inicio############ -->
-            <header>
-                    <nav>
-                        <a href="/inicio"><button>Inicio</button></a>
-                        <a href="/productos"><button>Productos</button></a>
-                        <a href="/clientes"><button>Clientes</button></a>
-                        <a href="/pedidos"><button>Pedidos</button></a>
-                    </nav>     
-            </header>
-            <main>
-                <h1>Hola {{ nombre_admin }}, bienvenido al panel de {{ tienda }}</h1>
-                <p>Fecha actual: {{ fecha }}</p>
-                <hr>
-            </main>
+{% extends 'base.html' %}
 
-            <!-- ############Productos############ -->
-            
-            <header>
-                <nav>
-                    <a href="/inicio"><button>Inicio</button></a>
-                    <a href="/productos"><button>Productos</button></a>
-                    <a href="/clientes"><button>Clientes</button></a>
-                    <a href="/pedidos"><button>Pedidos</button></a>
-                </nav>     
-            </header>
+{% block title %}Dashboard{% endblock %}
 
-            <h2>Catálogo de Productos</h2>
-            <div>
-                <table border="1">
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Precio</th>
-                        <th>Categoría</th>
-                        <th>Stock</th>
-                    </tr>
-                    {% for producto in productos %}
-                    <tr>
-                        <td>{{ producto.nombre }}</td>
-                        <td>${{ producto.precio }}</td>
-                        <td>{{ producto.categoria }}</td>
-                        <td>
-                            {% if producto.stock > 0 %}
-                                {{ producto.stock }}
-                            {% else %}
-                                <strong>Agotado</strong>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </div>
-            <p><strong>Total en stock:</strong> {{ total_stock }}</p>
-
-            <div>
-                <a href="/productos/nuevo">
-                    <button>
-                        Añadir Productos
-                    </button>
-                </a>
-                <a href="/productos/nuevo">
-                    <button>
-                        Eliminar Producto
-                    </button>
-                </a>
-
-            </div>
-
-            
-            
-            <!-- ############Formulario############ -->
-        
+{% block content %}
+    <!-- ############Productos############ -->
+    <h2>Catálogo de Productos</h2>
+    <div>
+        <table border="1">
+            <tr>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+            </tr>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.nombre }}</td>
+                <td>${{ producto.precio }}</td>
+                <td>{{ producto.categoria }}</td>
+                <td>
+                    {% if producto.stock > 0 %}
+                        {{ producto.stock }}
+                    {% else %}
+                        <strong>Agotado</strong>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <p><strong>Total en stock:</strong> {{ total_stock }}</p>
 
 
-            <div>
-                <h3>Añadir nuevo producto</h3>
-                <form action="/productos_nuevo" method="POST">
-                    <label for="nombre">Nombre:</label><br>
-                    <input type="text" id="nombre" name="nombre" required><br><br>
 
-                    <label for="precio">Precio:</label><br>
-                    <input type="number" id="precio" name="precio" step="0.01" required><br><br>
 
-                    <label for="categoria">Categoría:</label><br>
-                    <input type="text" id="categoria" name="categoria" required><br><br>
 
-                    <label for="stock">Stock:</label><br>
-                    <input type="number" id="stock" name="stock" min="0" required><br><br>
+    <!-- ############Clientes############ -->
 
-                    <button type="submit">Guardar Producto</button>
-                </form>
-            </div>
-
+    <h2>Clientes</h2>
+    <div class="clientes-container">
+        <ul>
+            {% for cliente in clientes %}
+            <li>
+                {{ cliente.nombre }} ({{ cliente.email }}) - 
+                {% if cliente.activo %}Activo{% else %}Inactivo{% endif %} - 
+                Pedidos: {{ cliente.pedidos }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
     
-            <!-- ############Clientes############ -->
-       
+    <div>
+        <p>
+            <strong>Clientes activos:</strong> {{ clientes_activos }}
+        </p>
 
-            <header>
-                <nav>
-                    <a href="/inicio"><button>Inicio</button></a>
-                    <a href="/productos"><button>Productos</button></a>
-                    <a href="/clientes"><button>Clientes</button></a>
-                    <a href="/pedidos"><button>Pedidos</button></a>
-                </nav>     
-            </header>
-
-            <h2>Clientes</h2>
-            <div class="clientes-container">
-                <ul>
-                    {% for cliente in clientes %}
-                    <li>
-                        {{ cliente.nombre }} ({{ cliente.email }}) - 
-                        {% if cliente.activo %}Activo{% else %}Inactivo{% endif %} - 
-                        Pedidos: {{ cliente.pedidos }}
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            
-            <div>
-                <p>
-                    <strong>Clientes activos:</strong> {{ clientes_activos }}
-                </p>
-        
-                <p>
-                    <strong>Cliente con más pedidos:</strong> {{ cliente_top.nombre }} ({{ cliente_top.pedidos }} pedidos)
-                </p>
-            </div>
-
-            
-            <!-- ############Pedidos############ -->
-
-            <header>
-                <nav>
-                    <a href="/inicio"><button>Inicio</button></a>
-                    <a href="/productos"><button>Productos</button></a>
-                    <a href="/clientes"><button>Clientes</button></a>
-                    <a href="/pedidos"><button>Pedidos</button></a>
-                </nav>     
-            </header>
-
-            <h2>Pedidos Recientes</h2>
-            <div>
-                <table border="1">
-                    <tr>
-                        <th>Cliente</th>
-                        <th>Total</th>
-                        <th>Fecha</th>
-                    </tr>
-                    {% for pedido in pedidos %}
-                    <tr>
-                        <td>{{ pedido.cliente }}</td>
-                        <td>${{ pedido.total }}</td>
-                        <td>{{ pedido.fecha }}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </div>
-            <div>
-                <p>
-                    <strong>Ingreso total:</strong> ${{ ingreso_total }}
-                </p>
-            </div>
-
-            <!-- ############Error############ -->
-        
-            <header>
-                <nav>
-                    <a href="/inicio"><button>Inicio</button></a>
-                    <a href="/productos"><button>Productos</button></a>
-                    <a href="/clientes"><button>Clientes</button></a>
-                    <a href="/pedidos"><button>Pedidos</button></a>
-                </nav>     
-            </header>
-
-            <div>
-                <h2>Error 404 Not Found</h2>
-            </div>
-            
+        <p>
+            <strong>Cliente con más pedidos:</strong> {{ cliente_top.nombre }} ({{ cliente_top.pedidos }} pedidos)
+        </p>
     </div>
 
-    
-</body>
-</html>
+
+    <!-- ############Pedidos############ -->
+
+    <h2>Pedidos Recientes</h2>
+
+    {% if pedidos %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Total</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in pedidos %}
+                <tr>
+                    <td>{{ pedido.cliente }}</td>
+                    <td>${{ pedido.total }}</td>
+                    <td>{{ pedido.fecha }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p><strong>Ingreso total:</strong> ${{ ingreso_total }}</p>
+    {% else %}
+        <p>No hay pedidos registrados.</p>
+    {% endif %}
+
+{% endblock %}

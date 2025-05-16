@@ -3,43 +3,43 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h2>Catálogo de Productos</h2>
-<div>
-    <table border="1">
-        <tr>
-            <th>Nombre</th>
-            <th>Precio</th>
-            <th>Categoría</th>
-            <th>Stock</th>
-        </tr>
-        {% for producto in productos %}
-        <tr>
-            <td>{{ producto.nombre }}</td>
-            <td>${{ producto.precio }}</td>
-            <td>{{ producto.categoria }}</td>
-            <td>
-                {% if producto.stock > 0 %}
-                    {{ producto.stock }}
-                {% else %}
-                    <strong>Agotado</strong>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-</div>
-<p><strong>Total en stock:</strong> {{ total_stock }}</p>
-<div>
-    <a href="/productos/nuevo">
-        <button>
-            Añadir Productos
-        </button>
-    </a>
-    <a href="/productos/nuevo">
-        <button>
-            Eliminar Producto
-        </button>
-    </a>
+    <h2>Catálogo de Productos</h2>
+    <div>
+        <table border="1">
+            <tr>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+            </tr>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.nombre }}</td>
+                <td>${{ producto.precio }}</td>
+                <td>{{ producto.categoria }}</td>
+                <td>
+                    {% if producto.stock > 0 %}
+                        {{ producto.stock }}
+                    {% else %}
+                        <strong>Agotado</strong>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <p><strong>Total en stock:</strong> {{ total_stock }}</p>
+    <div>
+        <a href="/productos_nuevo">
+            <button>
+                Añadir Productos
+            </button>
+        </a>
+        <a href="/productos_nuevo">
+            <button>
+                Eliminar Producto
+            </button>
+        </a>
 
-</div>
+    </div>
 {% endblock %}

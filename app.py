@@ -23,24 +23,41 @@ fecha = date.today()
 
 #  Por defecto la pagina te redirige a inicio
 @app.route("/")
-def hola():
-    
-    return render_template("dashboard.html", 
-                           nombre_admin = nombre_admin, 
-                           tienda = tienda, fecha = fecha, 
-                           pagina="inicio")
-
-
-
-
-#Inicio
-@app.route("/inicio")
 def pagina_inicio():
-    
+    productos = list(productos_coleccion.find())
+    total_stock = sum([p["stock"] for p in productos])
+
+    clientes = [
+        {"nombre": "Ana Torres", "email": "ana@mail.com", "activo": True, "pedidos": 4},
+        {"nombre": "Luis Pérez", "email": "luis@mail.com", "activo": False, "pedidos": 1},
+        {"nombre": "Marta García", "email": "marta@mail.com", "activo": True, "pedidos": 7},
+        {"nombre": "Carlos Ruiz", "email": "carlos@mail.com", "activo": False, "pedidos": 0}
+    ]
+    clientes_activos = sum(1 for c in clientes if c["activo"])
+    cliente_top = max(clientes, key=lambda c: c["pedidos"])
+
+    pedidos = [
+        {"cliente": "Ana Torres", "total": 1500.0, "fecha": "2025-05-01"},
+        {"cliente": "Marta García", "total": 240.0, "fecha": "2025-05-03"},
+        {"cliente": "Luis Pérez", "total": 800.0, "fecha": "2025-04-30"},
+        {"cliente": "Marta García", "total": 120.0, "fecha": "2025-05-05"}
+    ]
+    ingreso_total = sum(p["total"] for p in pedidos)
+
     return render_template("dashboard.html", 
-                           nombre_admin = nombre_admin, 
-                           tienda = tienda, fecha = fecha, 
-                           pagina="inicio")
+        nombre_admin=nombre_admin,
+        tienda=tienda,
+        fecha=fecha,
+        pagina="inicio",
+        productos=productos,
+        total_stock=total_stock,
+        clientes=clientes,
+        clientes_activos=clientes_activos,
+        cliente_top=cliente_top,
+        pedidos=pedidos,
+        ingreso_total=ingreso_total)
+
+
 
 
 #Clientes
@@ -68,7 +85,7 @@ def pagina_clientes():
         if cliente["pedidos"] > cliente_top["pedidos"]:
             cliente_top = cliente
 
-    return render_template("dashboard.html", 
+    return render_template("lista_usuarios.html", 
                            pagina = pagina,
                            clientes=clientes,
                            clientes_activos=clientes_activos,
@@ -95,13 +112,11 @@ def pagina_pedidos():
         ingreso_total += pedido["total"]
 
     return render_template(
-        'dashboard.html',
+        'lista_pedidos.html',
         pagina = pagina,
         nombre_admin=nombre_admin,
         tienda=tienda,
         fecha=fecha,
-        
-        
         pedidos=pedidos,
         ingreso_total=ingreso_total
     )
@@ -110,23 +125,13 @@ def pagina_pedidos():
 
 
 #Productos
-@app.route("/productos")
+@app.route('/productos')
 def pagina_productos():
-
-    pagina = "productos"
-    # Lista de productos
     productos = list(productos_coleccion.find())
+    total_stock = sum(p['stock'] for p in productos)
+    return render_template('lista_productos.html', 
+                           productos=productos, total_stock=total_stock, nombre_admin=nombre_admin, tienda=tienda, fecha=fecha)
 
-    # Total de unidades en stock
-    total_stock = 0
-    for producto in productos:
-        total_stock += producto["stock"]
-    
-    return render_template('dashboard.html', 
-                           pagina = pagina,
-                           productos=productos,
-                           total_stock=total_stock
-                           )
 
 
 
@@ -153,15 +158,19 @@ def nuevo_producto():
     return redirect("/productos")
 
 
-@app.route("/productos/nuevo", methods=["GET"])
+@app.route("/productos_nuevo", methods=["GET"])
 def formulario_nuevo_producto():
-    return render_template("dashboard.html", 
+    return render_template("añadir_producto.html", 
                            pagina="productos_nuevo",
                            nombre_admin=nombre_admin,
                            tienda=tienda,
                            fecha=fecha)
 
 
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
