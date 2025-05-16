@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 from datetime import date
 from pymongo import MongoClient
+from models.productos import Producto
 
 app = Flask(__name__)
-
+app.secret_key= "Password" #Es necesario para usar flash
 
 #Conexion a la BBDD
 cliente = MongoClient("mongodb+srv://afercor2806:LCrXK9Mqkj78BJY8@cluster0.t9bfnum.mongodb.net/")
@@ -127,35 +128,55 @@ def pagina_pedidos():
 #Productos
 @app.route('/productos')
 def pagina_productos():
-    productos = list(productos_coleccion.find())
-    total_stock = sum(p['stock'] for p in productos)
-    return render_template('lista_productos.html', 
-                           productos=productos, total_stock=total_stock, nombre_admin=nombre_admin, tienda=tienda, fecha=fecha)
+    datos_productos = productos_coleccion.find()  # Datos sin procesar
+    productos = [Producto.from_dict(p) for p in datos_productos]  # Convertir a objetos Producto
+    
+    total_stock = sum(producto.stock for producto in productos)
 
+    return render_template('lista_productos.html',
+                           productos=productos,
+                           total_stock=total_stock,
+                           nombre_admin=nombre_admin,
+                           tienda=tienda,
+                           fecha=fecha)
 
 
 
 #Formulario
 @app.route("/productos_nuevo", methods=["POST"])
 def nuevo_producto():
-    nombre = request.form.get("nombre")
-    precio = float(request.form.get("precio"))
-    categoria = request.form.get("categoria")
-    stock = int(request.form.get("stock"))
 
-    nuevo_producto = {
-        "nombre": nombre,
-        "precio": precio,
-        "categoria": categoria,
-        "stock": stock
-    }
-    #Insertar el producto nuevo en la BBDD
-    productos_coleccion.insert_one(nuevo_producto)
+    nombre = request.form.get("nombre", "").strip()
+    categoria = request.form.get("categoria", "").strip()
 
+    try:
+        precio = float(request.form.get("precio", 0))
+        stock = int(request.form.get("stock", 0))
+    except ValueError:
+        flash("Precio y stock deben ser valores numéricos.")
+        return redirect("/productos_nuevo")
 
-    print(f"Nuevo producto: {nombre}, ${precio}, {categoria}, Stock: {stock}")
+    # Validaciones de negocio
+    if not nombre or not categoria:
+        flash("El nombre y la categoría no pueden estar vacíos.")
+        return redirect("/productos_nuevo")
+    if precio < 0:
+        flash("El precio no puede ser negativo.")
+        return redirect("/productos_nuevo")
+    if stock < 0:
+        flash("El stock no puede ser negativo.")
+        return redirect("/productos_nuevo")
+
+    try:
+        producto = Producto(nombre=nombre, precio=precio, categoria=categoria, stock=stock)
+        productos_coleccion.insert_one(producto.to_dict())
+        flash("Producto añadido correctamente.")
+    except ValueError as e:
+        flash(f"Error al crear el producto: {str(e)}")
+        return redirect("/productos_nuevo")
 
     return redirect("/productos")
+
 
 
 @app.route("/productos_nuevo", methods=["GET"])
