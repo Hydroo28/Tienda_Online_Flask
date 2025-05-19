@@ -4,21 +4,24 @@
 
 {% block content %}
     <div>
-        <h3>Añadir nuevo producto</h3>
-        <form action="/productos_nuevo" method="POST">
-            <label for="nombre">Nombre:</label><br>
+        <h2>Registrar Nuevo Cliente</h2>
+        <form method="POST" action="/clientes_nuevo">
+            <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" required><br><br>
 
-            <label for="precio">Precio:</label><br>
-            <input type="number" id="precio" name="precio" step="0.01" required><br><br>
+            <label for="email">Correo electrónico:</label>
+            <input type="email" id="email" name="email" required><br><br>
 
-            <label for="categoria">Categoría:</label><br>
-            <input type="text" id="categoria" name="categoria" required><br><br>
+            <label for="activo">¿Activo?</label>
+            <select id="activo" name="activo" required>
+                <option value="true">Sí</option>
+                <option value="false">No</option>
+            </select><br><br>
 
-            <label for="stock">Stock:</label><br>
-            <input type="number" id="stock" name="stock" min="0" required><br><br>
+            <label for="pedidos">Número de pedidos:</label>
+            <input type="number" id="pedidos" name="pedidos" value="0" min="0" required><br><br>
 
-            <button type="submit">Guardar Producto</button>
+            <button type="submit">Registrar</button>
         </form>
     </div>
 {% endblock %}

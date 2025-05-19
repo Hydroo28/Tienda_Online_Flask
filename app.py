@@ -20,7 +20,19 @@ nombre_admin = "Alejandro Fernandez"
 tienda = "TecnoMarket"
 fecha = date.today()
 
+clientes = [
+        {"nombre": "Ana Torres", "email": "ana@mail.com", "activo": True, "pedidos": 4},
+        {"nombre": "Luis Pérez", "email": "luis@mail.com", "activo": False, "pedidos": 1},
+        {"nombre": "Marta García", "email": "marta@mail.com", "activo": True, "pedidos": 7},
+        {"nombre": "Carlos Ruiz", "email": "carlos@mail.com", "activo": False, "pedidos": 0}
+    ]
 
+pedidos = [
+        {"cliente": "Ana Torres", "total": 1500.0, "fecha": "2025-05-01"},
+        {"cliente": "Marta García", "total": 240.0, "fecha": "2025-05-03"},
+        {"cliente": "Luis Pérez", "total": 800.0, "fecha": "2025-04-30"},
+        {"cliente": "Marta García", "total": 120.0, "fecha": "2025-05-05"}
+    ]
 
 #  Por defecto la pagina te redirige a inicio
 @app.route("/")
@@ -28,21 +40,11 @@ def pagina_inicio():
     productos = list(productos_coleccion.find())
     total_stock = sum([p["stock"] for p in productos])
 
-    clientes = [
-        {"nombre": "Ana Torres", "email": "ana@mail.com", "activo": True, "pedidos": 4},
-        {"nombre": "Luis Pérez", "email": "luis@mail.com", "activo": False, "pedidos": 1},
-        {"nombre": "Marta García", "email": "marta@mail.com", "activo": True, "pedidos": 7},
-        {"nombre": "Carlos Ruiz", "email": "carlos@mail.com", "activo": False, "pedidos": 0}
-    ]
+    
     clientes_activos = sum(1 for c in clientes if c["activo"])
     cliente_top = max(clientes, key=lambda c: c["pedidos"])
 
-    pedidos = [
-        {"cliente": "Ana Torres", "total": 1500.0, "fecha": "2025-05-01"},
-        {"cliente": "Marta García", "total": 240.0, "fecha": "2025-05-03"},
-        {"cliente": "Luis Pérez", "total": 800.0, "fecha": "2025-04-30"},
-        {"cliente": "Marta García", "total": 120.0, "fecha": "2025-05-05"}
-    ]
+    
     ingreso_total = sum(p["total"] for p in pedidos)
 
     return render_template("dashboard.html", 
@@ -66,13 +68,7 @@ def pagina_inicio():
 def pagina_clientes():
     pagina = "clientes"
 
-    # Lista de clientes
-    clientes = [
-        {"nombre": "Ana Torres", "email": "ana@mail.com", "activo": True, "pedidos": 4},
-        {"nombre": "Luis Pérez", "email": "luis@mail.com", "activo": False, "pedidos": 1},
-        {"nombre": "Marta García", "email": "marta@mail.com", "activo": True, "pedidos": 7},
-        {"nombre": "Carlos Ruiz", "email": "carlos@mail.com", "activo": False, "pedidos": 0}
-    ]
+
 
     # Conteo de clientes activos
     clientes_activos = 0
@@ -92,6 +88,46 @@ def pagina_clientes():
                            clientes_activos=clientes_activos,
                            cliente_top=cliente_top,)
 
+
+
+#Registrar Cliente POST
+@app.route("/clientes_nuevo", methods=["POST"])
+def nuevo_cliente():
+    nombre = request.form.get("nombre", "").strip()
+    email = request.form.get("email", "").strip()
+    activo_str = request.form.get("activo", "false").lower()
+    activo = True if activo_str == "true" else False
+
+    try:
+        pedidos = int(request.form.get("pedidos", 0))
+    except ValueError:
+        flash("El número de pedidos debe ser un número válido.")
+        return redirect("/registrar_usuario")
+
+    if not nombre or not email:
+        flash("El nombre y el correo electrónico no pueden estar vacíos.")
+        return redirect("/registro_usuario")
+
+    nuevo = {
+        "nombre": nombre,
+        "email": email,
+        "activo": activo,
+        "pedidos": pedidos
+    }
+
+    clientes.append(nuevo)
+    flash("Cliente registrado correctamente.")
+    return redirect("/clientes")
+
+#Registrar Cliente GET
+@app.route("/clientes_nuevo", methods=["GET"])
+def formulario_nuevo_cliente():
+    return render_template("registro_usuario.html", 
+        pagina="clientes",
+        nombre_admin=nombre_admin,
+        tienda=tienda,
+        fecha=fecha
+    )
 
 
 
