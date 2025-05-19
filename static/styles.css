@@ -75,6 +75,7 @@ table {
     overflow: hidden;
     background-color: white;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin: 20px auto;
 }
 
 th, td {
@@ -149,4 +150,22 @@ button {
     padding: 10px;
     border: 1px solid #f00;
     list-style: none;
+}
+
+.boton-accion {
+    background-color: #ee9b00;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin: 4px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.boton-accion:hover {
+    background-color: #ca6702;
+    transform: translateY(-2px);
 }

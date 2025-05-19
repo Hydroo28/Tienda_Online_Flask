@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, flash
 from datetime import date
 from pymongo import MongoClient
 from models.productos import Producto
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 app.secret_key= "Password" #Es necesario para usar flash
@@ -84,6 +85,9 @@ def pagina_clientes():
 
     return render_template("lista_usuarios.html", 
                            pagina = pagina,
+                           nombre_admin=nombre_admin,
+                           tienda=tienda,
+                           fecha=fecha,
                            clientes=clientes,
                            clientes_activos=clientes_activos,
                            cliente_top=cliente_top,)
@@ -175,7 +179,22 @@ def pagina_productos():
                            nombre_admin=nombre_admin,
                            tienda=tienda,
                            fecha=fecha)
+#Detalle Producto
+@app.route('/producto/<producto_id>')
+def detalle_producto(producto_id):
+    # Buscar el producto en MongoDB por _id
+    producto_data = productos_coleccion.find_one({"_id": ObjectId(producto_id)})
+    if not producto_data:
+        flash("Producto no encontrado.")
+        return redirect("/productos")
+    
+    producto = Producto.from_dict(producto_data)
 
+    return render_template("detalle_producto.html",
+                           producto=producto,
+                           nombre_admin=nombre_admin,
+                           tienda=tienda,
+                           fecha=fecha)
 
 
 #Formulario

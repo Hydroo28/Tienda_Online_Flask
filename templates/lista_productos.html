@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Productos{% endblock %}
 
 {% block content %}
     <h2>Catálogo de Productos</h2>
@@ -11,6 +11,7 @@
                 <th>Precio</th>
                 <th>Categoría</th>
                 <th>Stock</th>
+                <th>Detalles</th>
             </tr>
             {% for producto in productos %}
             <tr>
@@ -24,6 +25,11 @@
                         <strong>Agotado</strong>
                     {% endif %}
                 </td>
+                <td>
+                    <a href="/producto/{{ producto.id }}">
+                        <button class="boton-accion">Ver Detalles</button>
+                    </a>
+                </td>
             </tr>
             {% endfor %}
         </table>
@@ -31,15 +37,9 @@
     <p><strong>Total en stock:</strong> {{ total_stock }}</p>
     <div>
         <a href="/productos_nuevo">
-            <button>
+            <button class="boton-accion">
                 Añadir Productos
             </button>
         </a>
-        <a href="/productos_nuevo">
-            <button>
-                Eliminar Producto
-            </button>
-        </a>
-
     </div>
 {% endblock %}
